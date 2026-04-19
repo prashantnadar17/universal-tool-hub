@@ -1,45 +1,55 @@
-import { useMemo } from "react";
-import { ToolCard } from "./tool-card";
-import { searchTools, type Tool } from "@/lib/tools";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
+import type { Tool } from "@/lib/tools";
 
-export default function ToolsGrid({ query }: { query: string }) {
-  const results = useMemo(() => searchTools(query), [query]);
-
-  if (results.length === 0) {
+export default function ToolsGrid({ items }: { items: Tool[] }) {
+  if (items.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border bg-card py-16 text-center">
-        <p className="text-base font-medium text-foreground">No tools match “{query}”.</p>
+        <p className="text-base font-medium text-foreground">No tools match your search.</p>
         <p className="mt-1 text-sm text-muted-foreground">Try a different keyword or category.</p>
       </div>
     );
   }
 
-  // Group by category, but keep a flat ordering by priority.
-  const grouped = results.reduce<Record<string, Tool[]>>((acc, tool) => {
-    (acc[tool.category] ||= []).push(tool);
+  // Group by category, ordered by priority.
+  const grouped = items.reduce<Record<string, Tool[]>>((acc, t) => {
+    (acc[t.category] ||= []).push(t);
     return acc;
   }, {});
-
-  const categories = Object.keys(grouped).sort(
-    (a, b) => grouped[a][0].priority - grouped[b][0].priority,
-  );
+  const categories = Object.keys(grouped).sort((a, b) => grouped[a][0].priority - grouped[b][0].priority);
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
       {categories.map((category) => (
-        <div key={category}>
-          <div className="mb-4 flex items-baseline justify-between">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+        <section key={category} aria-labelledby={`cat-${category}`}>
+          <div className="mb-3 flex items-baseline justify-between">
+            <h2 id={`cat-${category}`} className="text-xl font-semibold tracking-tight text-foreground">
               {category}
             </h2>
-            <span className="text-sm text-muted-foreground">{grouped[category].length} tools</span>
+            <span className="text-xs text-muted-foreground">{grouped[category].length} tools</span>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {grouped[category].map((tool) => (
-              <ToolCard key={tool.slug} tool={tool} />
+              <Link
+                key={tool.slug}
+                to="/tools/$slug"
+                params={{ slug: tool.slug }}
+                aria-label={`Open ${tool.name}`}
+                className="group flex h-full flex-col rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-secondary-foreground">
+                    {tool.category}
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                </div>
+                <h3 className="text-base font-semibold text-foreground">{tool.name}</h3>
+                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{tool.description}</p>
+              </Link>
             ))}
           </div>
-        </div>
+        </section>
       ))}
     </div>
   );
