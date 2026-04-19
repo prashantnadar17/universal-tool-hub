@@ -49,7 +49,7 @@ export function CommandPalette() {
   }
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen} title="Search tools" description="Find any tool. Press Cmd+K anytime.">
+    <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput value={query} onValueChange={setQuery} placeholder="Search 100+ tools…" />
       <CommandList>
         <CommandEmpty>No tools found.</CommandEmpty>
