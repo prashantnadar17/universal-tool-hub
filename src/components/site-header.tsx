@@ -4,7 +4,8 @@ import { ThemeToggle } from "./theme-toggle";
 import { MobileNav } from "./mobile-nav";
 import { totalTools } from "@/lib/tools";
 
-export function SiteHeader({ onOpenPalette }: { onOpenPalette?: () => void }) {
+export function SiteHeader({ onOpenPalette }: { onOpenPalette?: () => void } = {}) {
+  const openPalette = onOpenPalette ?? (() => window.dispatchEvent(new CustomEvent("ut:open-palette")));
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-2 px-3 sm:h-16 sm:px-6 lg:px-8">
@@ -25,7 +26,7 @@ export function SiteHeader({ onOpenPalette }: { onOpenPalette?: () => void }) {
         <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
-            onClick={onOpenPalette}
+            onClick={openPalette}
             aria-label="Open command palette (Cmd+K)"
             className="hidden items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground sm:inline-flex"
           >

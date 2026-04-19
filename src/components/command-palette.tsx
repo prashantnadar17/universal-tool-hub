@@ -12,7 +12,7 @@ export function CommandPalette() {
   const [recent, setRecent] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  // Cmd+K / Ctrl+K toggle
+  // Cmd+K / Ctrl+K toggle + global open event
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
@@ -20,8 +20,13 @@ export function CommandPalette() {
         setOpen((o) => !o);
       }
     };
+    const onOpen = () => setOpen(true);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("ut:open-palette", onOpen);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("ut:open-palette", onOpen);
+    };
   }, []);
 
   useEffect(() => {
