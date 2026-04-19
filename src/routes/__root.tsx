@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { ThemeProvider } from "@/components/theme-provider";
+import { CommandPalette } from "@/components/command-palette";
 
 import appCss from "../styles.css?url";
 
@@ -69,6 +70,7 @@ function RootComponent() {
   return (
     <ThemeProvider>
       <Outlet />
+      <CommandPalette />
     </ThemeProvider>
   );
 }
