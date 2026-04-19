@@ -1,10 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { BackToTop } from "@/components/back-to-top";
 import { CategorySidebar } from "@/components/category-nav";
 import { ToolRunner } from "@/components/tool-runner";
 import { tools } from "@/lib/tools";
+import { recordToolUsage } from "@/lib/usage";
 
 export const Route = createFileRoute("/tools/$slug")({
   loader: ({ params }) => {
@@ -48,6 +50,10 @@ export const Route = createFileRoute("/tools/$slug")({
 
 function ToolPage() {
   const { tool } = Route.useLoaderData();
+
+  useEffect(() => {
+    recordToolUsage(tool.slug);
+  }, [tool.slug]);
 
   const jsonLd = {
     "@context": "https://schema.org",

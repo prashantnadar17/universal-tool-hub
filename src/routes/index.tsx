@@ -5,6 +5,7 @@ import { BackToTop } from "@/components/back-to-top";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { ToolSearch } from "@/components/tool-search";
 import { CategorySidebar, CategoryChips } from "@/components/category-nav";
+import { UsageSections } from "@/components/usage-sections";
 import { fuzzySearchTools } from "@/lib/search";
 import { toolsByCategory, totalTools } from "@/lib/tools";
 
@@ -74,8 +75,13 @@ function HomePage() {
             </div>
           </section>
 
+          {/* Recently used + Popular (localStorage-backed) */}
+          <div className="mt-10">
+            <UsageSections />
+          </div>
+
           {/* Filter chips */}
-          <section aria-label="Filter tools by category" className="mt-10">
+          <section aria-label="Filter tools by category" className="mt-8">
             <CategoryChips active={activeCat} onChange={setActiveCat} />
           </section>
 
