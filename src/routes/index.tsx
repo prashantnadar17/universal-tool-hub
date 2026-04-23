@@ -4,6 +4,7 @@ import { ToolSearch } from "@/components/tool-search";
 import { CategoryChips } from "@/components/category-nav";
 import { UsageSections } from "@/components/usage-sections";
 import { FeaturedSkeleton, PopularSkeleton, ResultsSkeleton } from "@/components/home-skeletons";
+import { Reveal } from "@/components/reveal";
 import { fuzzySearchTools } from "@/lib/search";
 import { tools, toolsByCategory, totalTools, type ToolCategory } from "@/lib/tools";
 import { loadHomePrefs, saveHomePrefs } from "@/lib/home-prefs";
