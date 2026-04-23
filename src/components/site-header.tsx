@@ -27,22 +27,24 @@ export function SiteHeader({ onOpenPalette }: { onOpenPalette?: () => void } = {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-background/75">
       <div className="mx-auto flex h-14 w-full max-w-7xl min-w-0 items-center justify-between gap-2 px-3 xsm:px-4 sm:h-16 sm:px-6 lg:px-8 2xl:px-10 3xl:px-12">
         <div className="flex min-w-0 items-center gap-2">
-          <MobileNav />
+          {/* Sidebar toggle — top-left on desktop */}
           <button
             type="button"
             onClick={toggleSidebar}
             aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-pressed={sidebarCollapsed}
             title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="hidden h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors hover:bg-accent hover:text-accent-foreground lg:inline-flex"
+            className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors hover:bg-accent hover:text-accent-foreground lg:inline-flex"
           >
             {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
           </button>
-          <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-sm">
+          {/* Hamburger — top-left on mobile/tablet */}
+          <MobileNav />
+          <Link to="/" className="flex min-w-0 items-center gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-sm">
               <Wrench className="h-4 w-4" />
             </span>
             <span className="max-w-[10rem] truncate text-sm font-semibold tracking-tight text-foreground xsm:max-w-none xsm:text-base sm:text-lg">
