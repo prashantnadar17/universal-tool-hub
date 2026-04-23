@@ -19,13 +19,13 @@ export function MobileNav() {
       >
         <Menu className="h-4 w-4" />
       </SheetTrigger>
-      <SheetContent side="left" className="w-[85vw] max-w-sm overflow-y-auto p-0">
+      <SheetContent side="left" className="w-[85vw] max-w-sm overflow-x-hidden overflow-y-auto p-0">
         <SheetHeader className="border-b border-border p-4">
           <SheetTitle className="flex items-center gap-2 text-base">
             <Wrench className="h-4 w-4 text-primary" /> Categories
           </SheetTitle>
         </SheetHeader>
-        <nav className="p-3">
+        <nav className="min-w-0 p-3">
           <Link
             to="/"
             onClick={() => setOpen(false)}
@@ -58,7 +58,7 @@ export function MobileNav() {
                             to="/tools/$slug"
                             params={{ slug: tool.slug }}
                             onClick={() => setOpen(false)}
-                            className="block truncate rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                            className="block break-words rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                           >
                             {tool.name}
                           </Link>
