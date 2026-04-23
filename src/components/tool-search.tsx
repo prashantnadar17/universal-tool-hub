@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 export function ToolSearch({
   value,
@@ -19,8 +19,18 @@ export function ToolSearch({
           onChange={(e) => onChange(e.target.value)}
           placeholder="Search 100+ text tools…"
           aria-label="Search tools"
-          className="h-12 w-full min-w-0 appearance-none rounded-2xl border border-border bg-card pl-12 pr-4 text-sm text-foreground shadow-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring xsm:h-14 xsm:text-base sm:text-lg [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
+          className="h-12 w-full min-w-0 appearance-none rounded-2xl border border-border bg-card pl-12 pr-12 text-sm text-foreground shadow-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring xsm:h-14 xsm:text-base sm:text-lg [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
         />
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            aria-label="Clear search"
+            className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
       {value && (
         <p className="mt-2 px-1 text-sm text-muted-foreground">
