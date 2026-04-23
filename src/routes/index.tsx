@@ -309,21 +309,27 @@ function HomePage() {
             {!hydrated ? (
               <PopularSkeleton />
             ) : (
-              <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+              <div className="animate-fade-in rounded-2xl border border-border bg-card p-5 sm:p-6">
                 <div className="mb-4 flex items-center gap-2">
                   <Flame className="h-4 w-4 text-primary" aria-hidden />
                   <h2 id="popular-heading" className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
                     Most popular tools
                   </h2>
                 </div>
-                <div className="grid grid-cols-1 gap-2.5 xsm:grid-cols-2 lg:grid-cols-3">
+                <div
+                  ref={popularNav.containerRef}
+                  role="list"
+                  className="grid grid-cols-1 gap-2.5 xsm:grid-cols-2 lg:grid-cols-3"
+                >
                   {popular.map((tool, i) => (
                     <Link
                       key={tool.slug}
                       to="/tools/$slug"
                       params={{ slug: tool.slug }}
+                      data-grid-item
+                      role="listitem"
                       aria-label={`Open ${tool.name}`}
-                      className="group flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm"
+                      className="group flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       <span className="flex min-w-0 items-center gap-2">
                         <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[11px] font-semibold text-primary">
