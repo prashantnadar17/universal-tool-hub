@@ -131,11 +131,23 @@ function HomePage() {
   const categoryCount = Object.keys(toolsByCategory).length;
   const isSearching = deferredQuery.trim().length > 0 || activeCat !== null;
   const resultsRef = useRef<HTMLDivElement | null>(null);
+  const featuredNav = useGridKeyboardNav<HTMLDivElement>();
+  const popularNav = useGridKeyboardNav<HTMLDivElement>();
 
+  // Restore query + category from localStorage on first mount.
   useEffect(() => {
+    const prefs = loadHomePrefs();
+    if (prefs.query) setQuery(prefs.query);
+    if (prefs.activeCat) setActiveCat(prefs.activeCat);
     const t = window.setTimeout(() => setHydrated(true), 120);
     return () => window.clearTimeout(t);
   }, []);
+
+  // Persist whenever they change (debounced via effect microtask coalescing).
+  useEffect(() => {
+    if (!hydrated) return;
+    saveHomePrefs({ query, activeCat });
+  }, [query, activeCat, hydrated]);
 
   const results = useMemo(() => {
     const base = deferredQuery ? fuzzySearchTools(deferredQuery) : Object.values(toolsByCategory).flat();
