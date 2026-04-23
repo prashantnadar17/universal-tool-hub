@@ -11,6 +11,7 @@ export function CategorySidebar({ activeSlug }: { activeSlug?: string }) {
     Object.fromEntries(categories.map((c) => [c, !!toolsByCategory[c].some((t) => t.slug === activeSlug)])),
   );
   const [collapsed, setCollapsed] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
