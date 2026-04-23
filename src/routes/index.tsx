@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Suspense, lazy, useDeferredValue, useMemo, useState } from "react";
-import { LoadingSpinner } from "@/components/loading-spinner";
+import { Suspense, lazy, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { ToolSearch } from "@/components/tool-search";
 import { CategoryChips } from "@/components/category-nav";
 import { UsageSections } from "@/components/usage-sections";
+import { FeaturedSkeleton, PopularSkeleton, ResultsSkeleton } from "@/components/home-skeletons";
 import { fuzzySearchTools } from "@/lib/search";
 import { tools, toolsByCategory, totalTools, type ToolCategory } from "@/lib/tools";
 import {
@@ -124,14 +124,35 @@ const COMING_SOON: { title: string; description: string; icon: typeof FileText; 
 function HomePage() {
   const [query, setQuery] = useState("");
   const [activeCat, setActiveCat] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
   const deferredQuery = useDeferredValue(query);
   const categoryCount = Object.keys(toolsByCategory).length;
   const isSearching = deferredQuery.trim().length > 0 || activeCat !== null;
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setHydrated(true), 120);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const results = useMemo(() => {
     const base = deferredQuery ? fuzzySearchTools(deferredQuery) : Object.values(toolsByCategory).flat();
     return activeCat ? base.filter((t) => t.category === activeCat) : base;
   }, [deferredQuery, activeCat]);
+
+  const scrollToResults = useCallback(() => {
+    requestAnimationFrame(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, []);
+
+  const selectCategory = useCallback(
+    (cat: string | null) => {
+      setActiveCat(cat);
+      scrollToResults();
+    },
+    [scrollToResults],
+  );
 
   // "Most popular" — pick a curated set of high-priority, well-known tools.
   const popular = useMemo(() => {
@@ -195,35 +216,39 @@ function HomePage() {
               </h2>
               <span className="text-xs text-muted-foreground">{categoryCount} categories · {totalTools}+ tools</span>
             </div>
-            <div className="grid grid-cols-1 gap-4 xsm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURES.map((f) => {
-                const count = f.cats.reduce((n, c) => n + (toolsByCategory[c]?.length ?? 0), 0);
-                const Icon = f.icon;
-                return (
-                  <button
-                    key={f.title}
-                    type="button"
-                    onClick={() => setActiveCat(f.cats[0])}
-                    aria-label={`Browse ${f.title}`}
-                    className={`group flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${f.ring}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${f.accent}`}>
-                        <Icon className="h-5 w-5" />
+            {!hydrated ? (
+              <FeaturedSkeleton />
+            ) : (
+              <div className="grid grid-cols-1 gap-4 xsm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {FEATURES.map((f) => {
+                  const count = f.cats.reduce((n, c) => n + (toolsByCategory[c]?.length ?? 0), 0);
+                  const Icon = f.icon;
+                  return (
+                    <button
+                      key={f.title}
+                      type="button"
+                      onClick={() => selectCategory(f.cats[0])}
+                      aria-label={`Browse ${f.title}`}
+                      className={`group flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${f.ring}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${f.accent}`}>
+                          <Icon className="h-5 w-5" />
+                        </span>
+                        <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-secondary-foreground">
+                          {count} tools
+                        </span>
+                      </div>
+                      <h3 className="mt-4 text-base font-semibold text-foreground sm:text-lg">{f.title}</h3>
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{f.description}</p>
+                      <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-primary">
+                        Explore <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                       </span>
-                      <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-secondary-foreground">
-                        {count} tools
-                      </span>
-                    </div>
-                    <h3 className="mt-4 text-base font-semibold text-foreground sm:text-lg">{f.title}</h3>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{f.description}</p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-primary">
-                      Explore <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </section>
 
           {/* Coming soon tiles — communicates broader scope */}
@@ -260,39 +285,43 @@ function HomePage() {
 
           {/* Most popular strip */}
           <section aria-labelledby="popular-heading" className="mt-10 sm:mt-12">
-            <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <Flame className="h-4 w-4 text-primary" aria-hidden />
-                <h2 id="popular-heading" className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
-                  Most popular tools
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 gap-2.5 xsm:grid-cols-2 lg:grid-cols-3">
-                {popular.map((tool, i) => (
-                  <Link
-                    key={tool.slug}
-                    to="/tools/$slug"
-                    params={{ slug: tool.slug }}
-                    aria-label={`Open ${tool.name}`}
-                    className="group flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm"
-                  >
-                    <span className="flex min-w-0 items-center gap-2">
-                      <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[11px] font-semibold text-primary">
-                        {i + 1}
+            {!hydrated ? (
+              <PopularSkeleton />
+            ) : (
+              <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                <div className="mb-4 flex items-center gap-2">
+                  <Flame className="h-4 w-4 text-primary" aria-hidden />
+                  <h2 id="popular-heading" className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
+                    Most popular tools
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 gap-2.5 xsm:grid-cols-2 lg:grid-cols-3">
+                  {popular.map((tool, i) => (
+                    <Link
+                      key={tool.slug}
+                      to="/tools/$slug"
+                      params={{ slug: tool.slug }}
+                      aria-label={`Open ${tool.name}`}
+                      className="group flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm"
+                    >
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[11px] font-semibold text-primary">
+                          {i + 1}
+                        </span>
+                        <span className="truncate font-medium text-foreground">{tool.name}</span>
                       </span>
-                      <span className="truncate font-medium text-foreground">{tool.name}</span>
-                    </span>
-                    <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-                  </Link>
-                ))}
+                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </section>
         </>
       )}
 
       {/* Filter chips + grid (visible always, prominent during search) */}
-      <section aria-label="Filter tools by category" className="mt-10 sm:mt-12">
+      <section ref={resultsRef} aria-label="Filter tools by category" className="mt-10 scroll-mt-20 sm:mt-12">
         <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             {isSearching ? `Results (${results.length})` : "Browse all tools"}
@@ -300,20 +329,24 @@ function HomePage() {
           {activeCat && (
             <button
               type="button"
-              onClick={() => setActiveCat(null)}
+              onClick={() => selectCategory(null)}
               className="text-xs font-medium text-primary hover:underline"
             >
               Clear filter
             </button>
           )}
         </div>
-        <CategoryChips active={activeCat} onChange={setActiveCat} />
+        <CategoryChips active={activeCat} onChange={selectCategory} />
       </section>
 
       <section className="mt-5 sm:mt-6">
-        <Suspense fallback={<LoadingSpinner label="Loading tools…" />}>
-          <ToolsGrid items={results} />
-        </Suspense>
+        {!hydrated ? (
+          <ResultsSkeleton />
+        ) : (
+          <Suspense fallback={<ResultsSkeleton />}>
+            <ToolsGrid items={results} />
+          </Suspense>
+        )}
       </section>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
