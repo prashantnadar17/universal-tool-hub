@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Wrench, ChevronRight } from "lucide-react";
+import { Wrench, ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { tools, toolsByCategory } from "@/lib/tools";
 import { useEffect, useState } from "react";
 
