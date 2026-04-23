@@ -266,6 +266,7 @@ function FieldInput({ field, value, onChange }: { field: ToolField; value: unkno
           value={(value as string) ?? ""}
           onChange={(v) => onChange(v)}
           placeholder={field.placeholder ?? "Select a language…"}
+          includeAutoDetect={field.autoDetect}
         />
       </div>
     );
