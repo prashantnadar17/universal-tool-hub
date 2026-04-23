@@ -325,14 +325,65 @@ ${opts?.image ? `<meta property="og:image" content="${opts.image}" />` : ""}
     const chars = opts?.charset || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     return Array.from({ length: opts?.length ?? 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
   },
-  password: (_s: string, opts?: { length?: number; symbols?: boolean }) => {
+  password: (s: string, opts?: { length?: number; symbols?: boolean; count?: number }) => {
     const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const sym = "!@#$%^&*()-_=+[]{};:,.<>?";
     const chars = base + (opts?.symbols ? sym : "");
     const len = Math.max(8, opts?.length ?? 16);
-    const arr = new Uint32Array(len);
-    crypto.getRandomValues(arr);
-    return [...arr].map((n) => chars[n % chars.length]).join("");
+    const count = Math.min(20, Math.max(1, opts?.count ?? 5));
+    const seed = (s ?? "").trim();
+
+    const randInt = (max: number) => {
+      const a = new Uint32Array(1);
+      crypto.getRandomValues(a);
+      return a[0] % max;
+    };
+    const pick = (str: string) => str[randInt(str.length)];
+    const randomPassword = () => {
+      const arr = new Uint32Array(len);
+      crypto.getRandomValues(arr);
+      return [...arr].map((n) => chars[n % chars.length]).join("");
+    };
+
+    if (!seed) {
+      return Array.from({ length: count }, randomPassword).join("\n");
+    }
+
+    // Leet substitution map — randomly applied per-character
+    const leet: Record<string, string[]> = {
+      a: ["a", "@", "4"], A: ["A", "@", "4"],
+      b: ["b", "8"], B: ["B", "8"],
+      e: ["e", "3"], E: ["E", "3"],
+      i: ["i", "1", "!"], I: ["I", "1", "!"],
+      l: ["l", "1"], L: ["L", "1"],
+      o: ["o", "0"], O: ["O", "0"],
+      s: ["s", "$", "5"], S: ["S", "$", "5"],
+      t: ["t", "7"], T: ["T", "7"],
+      g: ["g", "9"], G: ["G", "9"],
+      z: ["z", "2"], Z: ["Z", "2"],
+    };
+
+    const variants = new Set<string>();
+    let attempts = 0;
+    while (variants.size < count && attempts < count * 10) {
+      attempts++;
+      // 1. Random capitalization + leet
+      let body = "";
+      for (const ch of seed) {
+        const upper = randInt(2) === 0 ? ch.toUpperCase() : ch.toLowerCase();
+        const opts2 = leet[upper] ?? leet[ch];
+        body += opts2 ? opts2[randInt(opts2.length)] : upper;
+      }
+      // 2. Pad to desired length with random chars
+      let pwd = body;
+      while (pwd.length < len) pwd += pick(chars);
+      pwd = pwd.slice(0, len);
+      // 3. Ensure at least one digit & symbol (if enabled)
+      if (!/\d/.test(pwd)) pwd = pwd.slice(0, -1) + pick("0123456789");
+      if (opts?.symbols && !/[^A-Za-z0-9]/.test(pwd)) pwd = pwd.slice(0, -1) + pick(sym);
+      variants.add(pwd);
+    }
+    return [...variants].join("\n");
   },
   uuid: (_s: string, opts?: { count?: number }) =>
     Array.from({ length: Math.max(1, opts?.count ?? 1) }, () => crypto.randomUUID()).join("\n"),
