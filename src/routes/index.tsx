@@ -392,7 +392,9 @@ function HomePage() {
         </div>
         <CategoryChips active={activeCat} onChange={selectCategory} />
       </section>
+      </Reveal>
 
+      <Reveal>
       <section className="mt-5 sm:mt-6">
         {!hydrated ? (
           <ResultsSkeleton />
@@ -404,6 +406,7 @@ function HomePage() {
           </div>
         )}
       </section>
+      </Reveal>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </main>
