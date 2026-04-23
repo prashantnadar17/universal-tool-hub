@@ -36,6 +36,8 @@ export function CategorySidebar({ activeSlug }: { activeSlug?: string }) {
       aria-label="Tool categories"
       className={`relative hidden shrink-0 border-r border-border bg-card transition-[width] duration-200 lg:block ${collapsed ? "w-0 overflow-visible border-r-0" : "w-64"}`}
     >
+      {/* aria-live announcement for sidebar state changes */}
+      <span role="status" aria-live="polite" className="sr-only">{announcement}</span>
       {/* Collapse/expand toggle — joined to the sidebar's right edge */}
       <button
         type="button"
