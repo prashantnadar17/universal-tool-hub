@@ -217,7 +217,18 @@ function HomePage() {
           Access <strong className="text-foreground">{totalTools}+ free online tools</strong> across {categoryCount} categories — writing, conversion, generators, developer utilities and more. No signup. Works in your browser.
         </p>
         <div className="mx-auto mt-8 max-w-2xl">
-          <ToolSearch value={query} onChange={setQuery} resultCount={results.length} />
+          <ToolSearch
+            value={query}
+            onChange={(v) => {
+              setQuery(v);
+              // When the user starts a new search, reset any active category
+              // so results aren't accidentally filtered to the previous one.
+              if (v.trim().length > 0 && activeCat !== null) {
+                setActiveCat(null);
+              }
+            }}
+            resultCount={results.length}
+          />
         </div>
       </section>
 
