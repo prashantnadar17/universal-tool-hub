@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Wrench, ChevronRight } from "lucide-react";
 import { tools, toolsByCategory } from "@/lib/tools";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function CategorySidebar({ activeSlug }: { activeSlug?: string }) {
   const categories = Object.keys(toolsByCategory).sort(
@@ -10,13 +10,24 @@ export function CategorySidebar({ activeSlug }: { activeSlug?: string }) {
   const [open, setOpen] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(categories.map((c) => [c, !!toolsByCategory[c].some((t) => t.slug === activeSlug)])),
   );
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const refresh = () => setCollapsed(document.documentElement.dataset.sidebarCollapsed === "true");
+    refresh();
+    window.addEventListener("ut:sidebar-change", refresh);
+
+    return () => window.removeEventListener("ut:sidebar-change", refresh);
+  }, []);
 
   return (
     <aside
       aria-label="Tool categories"
-      className="hidden w-64 shrink-0 border-r border-border bg-card lg:block"
+      className={`hidden shrink-0 border-r border-border bg-card transition-[width] duration-200 lg:block ${collapsed ? "w-0 overflow-hidden border-r-0" : "w-64"}`}
     >
-      <nav className="sticky top-16 max-h-[calc(100vh-4rem)] overflow-y-auto p-4">
+      <nav className="sticky top-16 max-h-[calc(100vh-4rem)] overflow-x-hidden overflow-y-auto p-4">
         <Link
           to="/"
           className="mb-4 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground hover:bg-accent"
@@ -73,7 +84,7 @@ export function CategoryChips({ active, onChange }: { active: string | null; onC
     (a, b) => toolsByCategory[a][0].priority - toolsByCategory[b][0].priority,
   );
   return (
-    <div role="tablist" aria-label="Filter by category" className="flex gap-2 overflow-x-auto pb-2">
+    <div role="tablist" aria-label="Filter by category" className="flex flex-wrap gap-2 pb-2">
       <Chip active={active === null} onClick={() => onChange(null)} label="All" />
       {categories.map((c) => (
         <Chip key={c} active={active === c} onClick={() => onChange(c)} label={`${c} (${toolsByCategory[c].length})`} />
@@ -89,13 +100,13 @@ function Chip({ active, onClick, label }: { active: boolean; onClick: () => void
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+      className={`max-w-full rounded-full border px-3 py-1.5 text-left text-xs font-medium transition-colors ${
         active
           ? "border-primary bg-primary text-primary-foreground"
           : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground"
       }`}
     >
-      {label}
+      <span className="block break-words">{label}</span>
     </button>
   );
 }
