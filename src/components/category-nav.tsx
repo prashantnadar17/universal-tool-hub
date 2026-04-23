@@ -22,12 +22,31 @@ export function CategorySidebar({ activeSlug }: { activeSlug?: string }) {
     return () => window.removeEventListener("ut:sidebar-change", refresh);
   }, []);
 
+  function toggleCollapsed() {
+    const next = !collapsed;
+    document.documentElement.dataset.sidebarCollapsed = String(next);
+    window.dispatchEvent(new CustomEvent("ut:sidebar-change", { detail: { collapsed: next } }));
+    setCollapsed(next);
+  }
+
   return (
     <aside
       aria-label="Tool categories"
-      className={`hidden shrink-0 border-r border-border bg-card transition-[width] duration-200 lg:block ${collapsed ? "w-0 overflow-hidden border-r-0" : "w-64"}`}
+      className={`relative hidden shrink-0 border-r border-border bg-card transition-[width] duration-200 lg:block ${collapsed ? "w-0 overflow-visible border-r-0" : "w-64"}`}
     >
-      <nav className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-x-hidden overflow-y-auto p-4 sm:top-16 sm:max-h-[calc(100vh-4rem)]">
+      {/* Collapse/expand toggle — joined to the sidebar's right edge */}
+      <button
+        type="button"
+        onClick={toggleCollapsed}
+        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        aria-pressed={collapsed}
+        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        className="absolute top-3 z-30 hidden h-8 w-8 -translate-y-0 items-center justify-center rounded-r-md border border-l-0 border-border bg-card text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground lg:inline-flex"
+        style={{ left: "100%" }}
+      >
+        {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+      </button>
+      <nav className={`sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-x-hidden overflow-y-auto p-4 sm:top-16 sm:max-h-[calc(100vh-4rem)] ${collapsed ? "invisible" : ""}`}>
         <Link
           to="/"
           className="mb-4 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground hover:bg-accent"
