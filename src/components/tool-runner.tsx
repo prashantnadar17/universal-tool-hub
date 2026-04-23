@@ -6,6 +6,7 @@ import { runAiTool } from "@/lib/ai.functions";
 import { TtsTool } from "./browser-tools/tts-tool";
 import { SttTool } from "./browser-tools/stt-tool";
 import { PasswordStrengthMeter } from "./password-strength-meter";
+import { LanguageCombobox } from "./language-combobox";
 
 export function ToolRunner({ tool }: { tool: Tool }) {
   const engine = engines[tool.slug];
@@ -221,6 +222,21 @@ function FieldInput({ field, value, onChange }: { field: ToolField; value: unkno
         />
         {field.label}
       </label>
+    );
+  }
+  if (field.type === "language") {
+    return (
+      <div className="flex flex-col gap-1">
+        <label htmlFor={id} className="text-xs font-medium text-muted-foreground">
+          {field.label}
+        </label>
+        <LanguageCombobox
+          id={id}
+          value={(value as string) ?? ""}
+          onChange={(v) => onChange(v)}
+          placeholder={field.placeholder ?? "Select a language…"}
+        />
+      </div>
     );
   }
   return (
