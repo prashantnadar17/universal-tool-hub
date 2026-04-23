@@ -28,6 +28,7 @@ export function CategorySidebar({ activeSlug }: { activeSlug?: string }) {
     document.documentElement.dataset.sidebarCollapsed = String(next);
     window.dispatchEvent(new CustomEvent("ut:sidebar-change", { detail: { collapsed: next } }));
     setCollapsed(next);
+    setAnnouncement(next ? "Sidebar collapsed" : "Sidebar expanded");
   }
 
   return (
