@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, Wrench, ChevronRight } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { tools, toolsByCategory } from "@/lib/tools";
@@ -7,9 +7,16 @@ import { tools, toolsByCategory } from "@/lib/tools";
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const location = useLocation();
   const categories = Object.keys(toolsByCategory).sort(
     (a, b) => toolsByCategory[a][0].priority - toolsByCategory[b][0].priority,
   );
+
+  // Auto-close the drawer when the route changes (Radix Dialog handles focus
+  // trap while open and restores focus to the trigger on close).
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
