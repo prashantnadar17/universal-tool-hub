@@ -103,9 +103,9 @@ function TransformOrAi({ tool }: { tool: Tool }) {
   const loading = pending || aiLoading;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid min-w-0 gap-4 lg:grid-cols-2">
       {/* Input */}
-      <section aria-labelledby="input-label" className="flex flex-col">
+      <section aria-labelledby="input-label" className="flex min-w-0 flex-col">
         <div className="mb-2 flex items-center justify-between">
           <label id="input-label" htmlFor={`${tool.slug}-input`} className="text-sm font-medium text-foreground">
             {engine.inputLabel ?? "Input"}
@@ -158,7 +158,7 @@ function TransformOrAi({ tool }: { tool: Tool }) {
       </section>
 
       {/* Output */}
-      <section aria-labelledby="output-label" className="flex flex-col">
+      <section aria-labelledby="output-label" className="flex min-w-0 flex-col">
         <div className="mb-2 flex items-center justify-between">
           <span id="output-label" className="text-sm font-medium text-foreground">
             {engine.outputLabel ?? "Output"}
@@ -230,7 +230,7 @@ function FieldInput({ field, value, onChange }: { field: ToolField; value: unkno
         value={value as string ?? ""}
         placeholder={field.placeholder}
         onChange={(e) => onChange(field.type === "number" ? Number(e.target.value) : e.target.value)}
-        className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring"
+        className="min-w-0 rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring"
       />
     </div>
   );
