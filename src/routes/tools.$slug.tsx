@@ -66,14 +66,14 @@ function ToolPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <SiteHeader />
-      <div className="mx-auto flex w-full max-w-7xl">
+      <div className="mx-auto flex w-full max-w-7xl min-w-0">
         <CategorySidebar activeSlug={tool.slug} />
-        <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8">
+        <main className="min-w-0 flex-1 px-3 py-6 xsm:px-4 sm:px-6 mg:py-8 lg:px-8 2xl:px-10 3xl:px-12">
           {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="mb-4 text-xs text-muted-foreground">
-            <ol className="flex items-center gap-1">
+          <nav aria-label="Breadcrumb" className="mb-4 overflow-x-auto text-xs text-muted-foreground">
+            <ol className="flex min-w-0 items-center gap-1 whitespace-nowrap">
               <li><Link to="/" className="hover:text-foreground">Home</Link></li>
               <li aria-hidden>/</li>
               <li>{tool.category}</li>
@@ -90,15 +90,15 @@ function ToolPage() {
             <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
               {tool.category}
             </span>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h1 className="mt-3 break-words text-2xl font-bold tracking-tight text-foreground xsm:text-3xl sm:text-4xl xl:text-5xl">
               {tool.name}
             </h1>
-            <p className="mt-2 max-w-3xl text-base text-muted-foreground">{tool.description}</p>
+            <p className="mt-2 max-w-3xl text-sm text-muted-foreground xsm:text-base">{tool.description}</p>
           </header>
 
           <ToolRunner tool={tool} />
 
-          <section className="mt-12 rounded-xl border border-border bg-card p-6">
+          <section className="mt-10 rounded-xl border border-border bg-card p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-foreground">About {tool.name}</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               {tool.name} is a free online tool in the <strong className="text-foreground">{tool.category}</strong> category. It runs entirely in your browser whenever possible, so your data stays private. No sign-up, no installs, no limits.

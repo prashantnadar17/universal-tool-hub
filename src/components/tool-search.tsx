@@ -10,7 +10,7 @@ export function ToolSearch({
   resultCount: number;
 }) {
   return (
-    <div className="w-full">
+    <div className="w-full min-w-0">
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <input
@@ -19,7 +19,7 @@ export function ToolSearch({
           onChange={(e) => onChange(e.target.value)}
           placeholder="Search 100+ text tools…"
           aria-label="Search tools"
-          className="h-14 w-full rounded-2xl border border-border bg-card pl-12 pr-12 text-base text-foreground shadow-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring sm:text-lg"
+          className="h-12 w-full min-w-0 rounded-2xl border border-border bg-card pl-12 pr-12 text-sm text-foreground shadow-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring xsm:h-14 xsm:text-base sm:text-lg"
         />
         {value && (
           <button

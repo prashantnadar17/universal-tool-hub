@@ -20,23 +20,23 @@ export default function ToolsGrid({ items }: { items: Tool[] }) {
   const categories = Object.keys(grouped).sort((a, b) => grouped[a][0].priority - grouped[b][0].priority);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8 sm:space-y-10">
       {categories.map((category) => (
         <section key={category} aria-labelledby={`cat-${category}`}>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 id={`cat-${category}`} className="text-xl font-semibold tracking-tight text-foreground">
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id={`cat-${category}`} className="break-words text-lg font-semibold tracking-tight text-foreground xsm:text-xl">
               {category}
             </h2>
             <span className="text-xs text-muted-foreground">{grouped[category].length} tools</span>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 xsm:grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
             {grouped[category].map((tool) => (
               <Link
                 key={tool.slug}
                 to="/tools/$slug"
                 params={{ slug: tool.slug }}
                 aria-label={`Open ${tool.name}`}
-                className="group flex h-full flex-col rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                className="group flex h-full min-w-0 flex-col rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
               >
                 <div className="mb-2 flex items-center justify-between">
                   <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-secondary-foreground">
@@ -44,8 +44,8 @@ export default function ToolsGrid({ items }: { items: Tool[] }) {
                   </span>
                   <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
                 </div>
-                <h3 className="text-base font-semibold text-foreground">{tool.name}</h3>
-                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{tool.description}</p>
+                <h3 className="break-words text-base font-semibold text-foreground">{tool.name}</h3>
+                <p className="mt-1 line-clamp-2 break-words text-sm text-muted-foreground">{tool.description}</p>
               </Link>
             ))}
           </div>

@@ -51,23 +51,23 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <SiteHeader />
-      <div className="mx-auto flex w-full max-w-7xl">
+      <div className="mx-auto flex w-full max-w-7xl min-w-0">
         <CategorySidebar />
-        <main className="flex-1 px-4 pb-24 pt-8 sm:px-6 lg:px-8">
+        <main className="min-w-0 flex-1 px-3 pb-16 pt-6 xsm:px-4 sm:px-6 mg:pt-8 lg:px-8 2xl:px-10 3xl:px-12">
           {/* Hero */}
-          <section className="mx-auto max-w-3xl text-center">
+          <section className="mx-auto max-w-3xl px-1 text-center">
             <span className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
               Universal Tools · Text Edition
             </span>
-            <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground xsm:text-4xl sm:text-5xl xl:text-6xl">
               Every text tool you need,{" "}
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 in one place.
               </span>
             </h1>
-            <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+            <p className="mt-4 text-sm text-muted-foreground xsm:text-base sm:text-lg">
               <strong className="text-foreground">{totalTools}+ tools</strong> across {categoryCount} categories. Typo-tolerant search. Free, fast, scalable.
             </p>
             <div className="mt-8">
@@ -76,17 +76,17 @@ function HomePage() {
           </section>
 
           {/* Recently used + Popular (localStorage-backed) */}
-          <div className="mt-10">
+          <div className="mt-8 sm:mt-10">
             <UsageSections />
           </div>
 
           {/* Filter chips */}
-          <section aria-label="Filter tools by category" className="mt-8">
+          <section aria-label="Filter tools by category" className="mt-6 sm:mt-8">
             <CategoryChips active={activeCat} onChange={setActiveCat} />
           </section>
 
           {/* Tools grid */}
-          <section className="mt-6">
+          <section className="mt-5 sm:mt-6">
             <Suspense fallback={<LoadingSpinner label="Loading tools…" />}>
               <ToolsGrid items={results} />
             </Suspense>
