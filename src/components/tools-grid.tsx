@@ -2,8 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import type { Tool } from "@/lib/tools";
 import { useGridKeyboardNav } from "@/hooks/use-grid-keyboard-nav";
+import { highlightMatch } from "@/lib/highlight";
 
-export default function ToolsGrid({ items }: { items: Tool[] }) {
+export default function ToolsGrid({ items, query = "" }: { items: Tool[]; query?: string }) {
   const { containerRef } = useGridKeyboardNav<HTMLDivElement>();
 
   if (items.length === 0) {
@@ -48,8 +49,12 @@ export default function ToolsGrid({ items }: { items: Tool[] }) {
                   </span>
                   <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
                 </div>
-                <h3 className="break-words text-base font-semibold text-foreground">{tool.name}</h3>
-                <p className="mt-1 line-clamp-2 break-words text-sm text-muted-foreground">{tool.description}</p>
+                <h3 className="break-words text-base font-semibold text-foreground">
+                  {highlightMatch(tool.name, query)}
+                </h3>
+                <p className="mt-1 line-clamp-2 break-words text-sm text-muted-foreground">
+                  {highlightMatch(tool.description, query)}
+                </p>
               </Link>
             ))}
           </div>
