@@ -257,7 +257,7 @@ export const engines: Record<string, ToolEngine> = {
     kind: "ai",
     aiPrompt: "You are a translator. Translate the user's text into the target language specified in the options. If the source language is 'Auto-detect', infer it from the text. Return ONLY the translated text — no quotes, no explanations, no source-language label.",
     fields: [
-      { key: "source", label: "Source language", type: "language", defaultValue: "Auto-detect", placeholder: "Auto-detect" },
+      { key: "source", label: "Source language", type: "language", defaultValue: "Auto-detect", placeholder: "Auto-detect", autoDetect: true },
       { key: "target", label: "Target language", type: "language", defaultValue: "Spanish" },
     ],
   },
