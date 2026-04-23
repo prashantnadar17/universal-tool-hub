@@ -325,10 +325,21 @@ ${opts?.image ? `<meta property="og:image" content="${opts.image}" />` : ""}
     const chars = opts?.charset || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     return Array.from({ length: opts?.length ?? 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
   },
-  password: (s: string, opts?: { length?: number; symbols?: boolean; count?: number }) => {
-    const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const sym = "!@#$%^&*()-_=+[]{};:,.<>?";
-    const chars = base + (opts?.symbols ? sym : "");
+  password: (s: string, opts?: { length?: number; symbols?: boolean; numbers?: boolean; mixedCase?: boolean; count?: number }) => {
+    const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lowerChars = "abcdefghijklmnopqrstuvwxyz";
+    const numChars = "0123456789";
+    const symChars = "!@#$%^&*()-_=+[]{};:,.<>?";
+
+    const useSymbols = !!opts?.symbols;
+    const useNumbers = opts?.numbers !== false;
+    const useMixed = opts?.mixedCase !== false;
+
+    let pool = lowerChars + (useMixed ? upperChars : "");
+    if (useNumbers) pool += numChars;
+    if (useSymbols) pool += symChars;
+    if (!pool) pool = lowerChars;
+
     const len = Math.max(8, opts?.length ?? 16);
     const count = Math.min(20, Math.max(1, opts?.count ?? 5));
     const seed = (s ?? "").trim();
@@ -342,45 +353,44 @@ ${opts?.image ? `<meta property="og:image" content="${opts.image}" />` : ""}
     const randomPassword = () => {
       const arr = new Uint32Array(len);
       crypto.getRandomValues(arr);
-      return [...arr].map((n) => chars[n % chars.length]).join("");
+      return [...arr].map((n) => pool[n % pool.length]).join("");
     };
 
     if (!seed) {
       return Array.from({ length: count }, randomPassword).join("\n");
     }
 
-    // Leet substitution map — randomly applied per-character
-    const leet: Record<string, string[]> = {
-      a: ["a", "@", "4"], A: ["A", "@", "4"],
-      b: ["b", "8"], B: ["B", "8"],
-      e: ["e", "3"], E: ["E", "3"],
-      i: ["i", "1", "!"], I: ["I", "1", "!"],
-      l: ["l", "1"], L: ["L", "1"],
-      o: ["o", "0"], O: ["O", "0"],
-      s: ["s", "$", "5"], S: ["S", "$", "5"],
-      t: ["t", "7"], T: ["T", "7"],
-      g: ["g", "9"], G: ["G", "9"],
-      z: ["z", "2"], Z: ["Z", "2"],
+    // Leet substitutions: numeric ones only when numbers enabled,
+    // symbol ones only when symbols enabled. Prevents stray @/$/! when symbols are off.
+    const leetNum: Record<string, string> = {
+      a: "4", b: "8", e: "3", i: "1", l: "1", o: "0", s: "5", t: "7", g: "9", z: "2",
+    };
+    const leetSym: Record<string, string> = {
+      a: "@", i: "!", s: "$",
     };
 
     const variants = new Set<string>();
     let attempts = 0;
     while (variants.size < count && attempts < count * 10) {
       attempts++;
-      // 1. Random capitalization + leet
       let body = "";
       for (const ch of seed) {
-        const upper = randInt(2) === 0 ? ch.toUpperCase() : ch.toLowerCase();
-        const opts2 = leet[upper] ?? leet[ch];
-        body += opts2 ? opts2[randInt(opts2.length)] : upper;
+        let c = useMixed
+          ? (randInt(2) === 0 ? ch.toUpperCase() : ch.toLowerCase())
+          : ch.toLowerCase();
+        const lower = c.toLowerCase();
+        const choices: string[] = [c];
+        if (useNumbers && leetNum[lower]) choices.push(leetNum[lower]);
+        if (useSymbols && leetSym[lower]) choices.push(leetSym[lower]);
+        c = choices[randInt(choices.length)];
+        body += c;
       }
-      // 2. Pad to desired length with random chars
       let pwd = body;
-      while (pwd.length < len) pwd += pick(chars);
+      while (pwd.length < len) pwd += pick(pool);
       pwd = pwd.slice(0, len);
-      // 3. Ensure at least one digit & symbol (if enabled)
-      if (!/\d/.test(pwd)) pwd = pwd.slice(0, -1) + pick("0123456789");
-      if (opts?.symbols && !/[^A-Za-z0-9]/.test(pwd)) pwd = pwd.slice(0, -1) + pick(sym);
+      if (useNumbers && !/\d/.test(pwd)) pwd = pwd.slice(0, -1) + pick(numChars);
+      if (useSymbols && !/[^A-Za-z0-9]/.test(pwd)) pwd = pwd.slice(0, -1) + pick(symChars);
+      if (useMixed && !/[A-Z]/.test(pwd)) pwd = pwd.slice(0, -1) + pick(upperChars);
       variants.add(pwd);
     }
     return [...variants].join("\n");
