@@ -236,13 +236,14 @@ function HomePage() {
       </Reveal>
 
       {/* Recently used + Popular (localStorage-backed) */}
-      <div className="mt-8 sm:mt-10">
+      <Reveal className="mt-8 sm:mt-10">
         <UsageSections />
-      </div>
+      </Reveal>
 
       {!isSearching && (
         <>
           {/* Featured categories */}
+          <Reveal as-child>
           <section aria-labelledby="featured-heading" className="mt-10 sm:mt-12">
             <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
               <h2 id="featured-heading" className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
