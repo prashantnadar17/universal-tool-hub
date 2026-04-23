@@ -166,7 +166,8 @@ function TransformOrAi({ tool }: { tool: Tool }) {
           <button
             type="button"
             onClick={run}
-            disabled={loading}
+            disabled={loading || targetInvalid}
+            title={targetInvalid ? "Select a valid target language to translate" : undefined}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:opacity-60"
             aria-label={`Run ${tool.name}`}
           >
@@ -182,9 +183,9 @@ function TransformOrAi({ tool }: { tool: Tool }) {
             Reset
           </button>
         </div>
-        {error && (
+        {(error || targetInvalid) && (
           <p role="alert" className="mt-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {error}
+            {error ?? "Please select a valid target language to enable translation."}
           </p>
         )}
       </section>
