@@ -12,6 +12,7 @@ export interface ToolField {
   placeholder?: string;
   defaultValue?: string | number | boolean;
   options?: { value: string; label: string }[];
+  autoDetect?: boolean;
 }
 
 export interface ToolEngine {
