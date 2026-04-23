@@ -198,6 +198,7 @@ function HomePage() {
   return (
     <main className="min-w-0 px-3 pb-16 pt-6 xsm:px-4 sm:px-6 mg:pt-8 lg:px-8 2xl:px-10 3xl:px-12">
       {/* Hero */}
+      <Reveal once amount={0.05}>
       <section className="overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-primary/5 to-transparent px-4 py-10 text-center sm:px-8 sm:py-14">
         <span
           className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/80 px-3 py-1 text-xs font-medium text-foreground shadow-sm backdrop-blur"
@@ -232,6 +233,7 @@ function HomePage() {
           />
         </div>
       </section>
+      </Reveal>
 
       {/* Recently used + Popular (localStorage-backed) */}
       <div className="mt-8 sm:mt-10">
