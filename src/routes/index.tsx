@@ -124,14 +124,35 @@ const COMING_SOON: { title: string; description: string; icon: typeof FileText; 
 function HomePage() {
   const [query, setQuery] = useState("");
   const [activeCat, setActiveCat] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
   const deferredQuery = useDeferredValue(query);
   const categoryCount = Object.keys(toolsByCategory).length;
   const isSearching = deferredQuery.trim().length > 0 || activeCat !== null;
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setHydrated(true), 120);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const results = useMemo(() => {
     const base = deferredQuery ? fuzzySearchTools(deferredQuery) : Object.values(toolsByCategory).flat();
     return activeCat ? base.filter((t) => t.category === activeCat) : base;
   }, [deferredQuery, activeCat]);
+
+  const scrollToResults = useCallback(() => {
+    requestAnimationFrame(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, []);
+
+  const selectCategory = useCallback(
+    (cat: string | null) => {
+      setActiveCat(cat);
+      scrollToResults();
+    },
+    [scrollToResults],
+  );
 
   // "Most popular" — pick a curated set of high-priority, well-known tools.
   const popular = useMemo(() => {
