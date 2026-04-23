@@ -226,7 +226,7 @@ export const engines: Record<string, ToolEngine> = {
   "password-generator": {
     kind: "transform", inputOptional: true,
     inputLabel: "Seed word (optional)",
-    inputPlaceholder: "e.g. prashant — leave empty for fully random passwords",
+    inputPlaceholder: "e.g. summer, dragon, alex — leave empty for fully random passwords",
     outputLabel: "Generated passwords",
     run: (s, o) => transforms.password(s, {
       length: Number(o?.length) || 16,
