@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { ToolRunner } from "@/components/tool-runner";
+import { Reveal } from "@/components/reveal";
 import { tools } from "@/lib/tools";
 import { recordToolUsage } from "@/lib/usage";
 
@@ -78,6 +79,7 @@ function ToolPage() {
         <ArrowLeft className="h-3.5 w-3.5" /> All tools
       </Link>
 
+      <Reveal once amount={0.05}>
       <header className="mb-6">
         <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
           {tool.category}
@@ -87,15 +89,20 @@ function ToolPage() {
         </h1>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground xsm:text-base">{tool.description}</p>
       </header>
+      </Reveal>
 
-      <ToolRunner tool={tool} />
+      <Reveal delay={0.05}>
+        <ToolRunner tool={tool} />
+      </Reveal>
 
+      <Reveal>
       <section className="mt-10 rounded-xl border border-border bg-card p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-foreground">About {tool.name}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {tool.name} is a free online tool in the <strong className="text-foreground">{tool.category}</strong> category. It runs entirely in your browser whenever possible, so your data stays private. No sign-up, no installs, no limits.
         </p>
       </section>
+      </Reveal>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </main>
