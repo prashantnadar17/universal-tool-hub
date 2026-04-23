@@ -243,7 +243,7 @@ function HomePage() {
       {!isSearching && (
         <>
           {/* Featured categories */}
-          <Reveal as-child>
+          <Reveal>
           <section aria-labelledby="featured-heading" className="mt-10 sm:mt-12">
             <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
               <h2 id="featured-heading" className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
@@ -292,8 +292,10 @@ function HomePage() {
               </div>
             )}
           </section>
+          </Reveal>
 
           {/* Coming soon tiles — communicates broader scope */}
+          <Reveal>
           <section aria-labelledby="more-heading" className="mt-10 sm:mt-12">
             <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
               <h2 id="more-heading" className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
@@ -324,8 +326,10 @@ function HomePage() {
               })}
             </div>
           </section>
+          </Reveal>
 
           {/* Most popular strip */}
+          <Reveal>
           <section aria-labelledby="popular-heading" className="mt-10 sm:mt-12">
             {!hydrated ? (
               <PopularSkeleton />
@@ -365,10 +369,12 @@ function HomePage() {
               </div>
             )}
           </section>
+          </Reveal>
         </>
       )}
 
       {/* Filter chips + grid (visible always, prominent during search) */}
+      <Reveal>
       <section ref={resultsRef} aria-label="Filter tools by category" className="mt-10 scroll-mt-20 sm:mt-12">
         <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
