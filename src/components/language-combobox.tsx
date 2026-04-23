@@ -21,27 +21,36 @@ export const LANGUAGES: string[] = [
   "Yiddish", "Yoruba", "Zulu",
 ];
 
+export const AUTO_DETECT = "Auto-detect";
+
 export function LanguageCombobox({
   id,
   value,
   onChange,
   placeholder = "Select a language…",
+  includeAutoDetect = false,
 }: {
   id?: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
+  includeAutoDetect?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const wrapRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const list = useMemo(
+    () => (includeAutoDetect ? [AUTO_DETECT, ...LANGUAGES] : LANGUAGES),
+    [includeAutoDetect],
+  );
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return LANGUAGES;
-    return LANGUAGES.filter((l) => l.toLowerCase().includes(q));
-  }, [query]);
+    if (!q) return list;
+    return list.filter((l) => l.toLowerCase().includes(q));
+  }, [query, list]);
 
   useEffect(() => {
     if (!open) return;
