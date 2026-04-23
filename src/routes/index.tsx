@@ -233,7 +233,12 @@ function HomePage() {
             {!hydrated ? (
               <FeaturedSkeleton />
             ) : (
-              <div className="grid grid-cols-1 gap-4 xsm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div
+                ref={featuredNav.containerRef}
+                role="grid"
+                aria-label="Featured tool categories"
+                className="grid animate-fade-in grid-cols-1 gap-4 xsm:gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              >
                 {FEATURES.map((f) => {
                   const count = f.cats.reduce((n, c) => n + (toolsByCategory[c]?.length ?? 0), 0);
                   const Icon = f.icon;
@@ -241,9 +246,11 @@ function HomePage() {
                     <button
                       key={f.title}
                       type="button"
+                      data-grid-item
+                      role="gridcell"
                       onClick={() => selectCategory(f.cats[0])}
                       aria-label={`Browse ${f.title}`}
-                      className={`group flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${f.ring}`}
+                      className={`group flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${f.ring}`}
                     >
                       <div className="flex items-center justify-between">
                         <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${f.accent}`}>
