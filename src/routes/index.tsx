@@ -321,7 +321,7 @@ function HomePage() {
       )}
 
       {/* Filter chips + grid (visible always, prominent during search) */}
-      <section aria-label="Filter tools by category" className="mt-10 sm:mt-12">
+      <section ref={resultsRef} aria-label="Filter tools by category" className="mt-10 scroll-mt-20 sm:mt-12">
         <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             {isSearching ? `Results (${results.length})` : "Browse all tools"}
@@ -329,20 +329,24 @@ function HomePage() {
           {activeCat && (
             <button
               type="button"
-              onClick={() => setActiveCat(null)}
+              onClick={() => selectCategory(null)}
               className="text-xs font-medium text-primary hover:underline"
             >
               Clear filter
             </button>
           )}
         </div>
-        <CategoryChips active={activeCat} onChange={setActiveCat} />
+        <CategoryChips active={activeCat} onChange={selectCategory} />
       </section>
 
       <section className="mt-5 sm:mt-6">
-        <Suspense fallback={<LoadingSpinner label="Loading tools…" />}>
-          <ToolsGrid items={results} />
-        </Suspense>
+        {!hydrated ? (
+          <ResultsSkeleton />
+        ) : (
+          <Suspense fallback={<ResultsSkeleton />}>
+            <ToolsGrid items={results} />
+          </Suspense>
+        )}
       </section>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
