@@ -5,6 +5,7 @@ import { engines, type ToolField } from "@/lib/tool-engines";
 import { runAiTool } from "@/lib/ai.functions";
 import { TtsTool } from "./browser-tools/tts-tool";
 import { SttTool } from "./browser-tools/stt-tool";
+import { PasswordStrengthMeter } from "./password-strength-meter";
 
 export function ToolRunner({ tool }: { tool: Tool }) {
   const engine = engines[tool.slug];
@@ -198,6 +199,9 @@ function TransformOrAi({ tool }: { tool: Tool }) {
             <Download className="h-4 w-4" /> Download
           </button>
         </div>
+        {tool.slug === "password-generator" && output && (
+          <PasswordStrengthMeter output={output} />
+        )}
       </section>
     </div>
   );
