@@ -3,7 +3,7 @@
 
 import { transforms } from "./text-transforms";
 
-export type ToolFieldType = "text" | "number" | "checkbox" | "select" | "url";
+export type ToolFieldType = "text" | "number" | "checkbox" | "select" | "url" | "language";
 
 export interface ToolField {
   key: string;
@@ -255,7 +255,7 @@ export const engines: Record<string, ToolEngine> = {
   "language-translator": {
     kind: "ai",
     aiPrompt: "Translate the user's text to the target language specified in the options. Return ONLY the translation.",
-    fields: [{ key: "target", label: "Target language", type: "text", placeholder: "e.g. Spanish, Japanese", defaultValue: "Spanish" }],
+    fields: [{ key: "target", label: "Target language", type: "language", defaultValue: "Spanish" }],
   },
   "plagiarism-checker": {
     kind: "ai",
