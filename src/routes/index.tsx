@@ -4,6 +4,7 @@ import { ToolSearch } from "@/components/tool-search";
 import { CategoryChips } from "@/components/category-nav";
 import { UsageSections } from "@/components/usage-sections";
 import { FeaturedSkeleton, PopularSkeleton, ResultsSkeleton } from "@/components/home-skeletons";
+import { Reveal } from "@/components/reveal";
 import { fuzzySearchTools } from "@/lib/search";
 import { tools, toolsByCategory, totalTools, type ToolCategory } from "@/lib/tools";
 import { loadHomePrefs, saveHomePrefs } from "@/lib/home-prefs";
@@ -197,6 +198,7 @@ function HomePage() {
   return (
     <main className="min-w-0 px-3 pb-16 pt-6 xsm:px-4 sm:px-6 mg:pt-8 lg:px-8 2xl:px-10 3xl:px-12">
       {/* Hero */}
+      <Reveal once amount={0.05}>
       <section className="overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-primary/5 to-transparent px-4 py-10 text-center sm:px-8 sm:py-14">
         <span
           className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/80 px-3 py-1 text-xs font-medium text-foreground shadow-sm backdrop-blur"
@@ -231,15 +233,17 @@ function HomePage() {
           />
         </div>
       </section>
+      </Reveal>
 
       {/* Recently used + Popular (localStorage-backed) */}
-      <div className="mt-8 sm:mt-10">
+      <Reveal className="mt-8 sm:mt-10">
         <UsageSections />
-      </div>
+      </Reveal>
 
       {!isSearching && (
         <>
           {/* Featured categories */}
+          <Reveal>
           <section aria-labelledby="featured-heading" className="mt-10 sm:mt-12">
             <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
               <h2 id="featured-heading" className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
@@ -288,8 +292,10 @@ function HomePage() {
               </div>
             )}
           </section>
+          </Reveal>
 
           {/* Coming soon tiles — communicates broader scope */}
+          <Reveal>
           <section aria-labelledby="more-heading" className="mt-10 sm:mt-12">
             <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
               <h2 id="more-heading" className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
@@ -320,8 +326,10 @@ function HomePage() {
               })}
             </div>
           </section>
+          </Reveal>
 
           {/* Most popular strip */}
+          <Reveal>
           <section aria-labelledby="popular-heading" className="mt-10 sm:mt-12">
             {!hydrated ? (
               <PopularSkeleton />
@@ -361,10 +369,12 @@ function HomePage() {
               </div>
             )}
           </section>
+          </Reveal>
         </>
       )}
 
       {/* Filter chips + grid (visible always, prominent during search) */}
+      <Reveal>
       <section ref={resultsRef} aria-label="Filter tools by category" className="mt-10 scroll-mt-20 sm:mt-12">
         <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
@@ -382,7 +392,9 @@ function HomePage() {
         </div>
         <CategoryChips active={activeCat} onChange={selectCategory} />
       </section>
+      </Reveal>
 
+      <Reveal>
       <section className="mt-5 sm:mt-6">
         {!hydrated ? (
           <ResultsSkeleton />
@@ -394,6 +406,7 @@ function HomePage() {
           </div>
         )}
       </section>
+      </Reveal>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </main>

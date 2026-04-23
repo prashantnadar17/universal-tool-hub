@@ -1,20 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Clock, Flame, ArrowRight } from "lucide-react";
 import { tools } from "@/lib/tools";
-import { getRecent, getTopPopular } from "@/lib/usage";
+import { getRecent } from "@/lib/usage";
 
 const bySlug = new Map(tools.map((t) => [t.slug, t]));
 
+// Curated globally-popular tools — shown in the "Popular tools" panel so it
+// stays useful even before the user has built up personal usage history.
+const CURATED_POPULAR: string[] = [
+  "word-counter",
+  "json-formatter",
+  "password-generator",
+  "qr-code-generator",
+  "text-summarizer",
+  "base64-encoder-decoder",
+  "case-converter",
+  "lorem-ipsum-generator",
+];
+
 function useUsage() {
   const [recent, setRecent] = useState<string[]>([]);
-  const [popular, setPopular] = useState<string[]>([]);
 
   useEffect(() => {
-    const refresh = () => {
-      setRecent(getRecent());
-      setPopular(getTopPopular(6));
-    };
+    const refresh = () => setRecent(getRecent());
     refresh();
     window.addEventListener("ut:usage-change", refresh);
     window.addEventListener("storage", refresh);
@@ -24,7 +33,7 @@ function useUsage() {
     };
   }, []);
 
-  return { recent, popular };
+  return { recent };
 }
 
 function ToolPill({ slug }: { slug: string }) {
@@ -44,7 +53,14 @@ function ToolPill({ slug }: { slug: string }) {
 }
 
 export function UsageSections() {
-  const { recent, popular } = useUsage();
+  const { recent } = useUsage();
+
+  // Hide tools already in "Recently used" to avoid duplication.
+  const popular = useMemo(() => {
+    const recentSet = new Set(recent.slice(0, 6));
+    return CURATED_POPULAR.filter((s) => !recentSet.has(s)).slice(0, 6);
+  }, [recent]);
+
   if (recent.length === 0 && popular.length === 0) return null;
 
   return (
@@ -65,11 +81,11 @@ export function UsageSections() {
         </section>
       )}
       {popular.length > 0 && (
-        <section aria-labelledby="popular-heading" className="min-w-0 rounded-xl border border-border bg-card/50 p-4">
+        <section aria-labelledby="popular-heading-usage" className="min-w-0 rounded-xl border border-border bg-card/50 p-4">
           <div className="mb-3 flex items-center gap-2">
             <Flame className="h-4 w-4 text-primary" aria-hidden />
-            <h2 id="popular-heading" className="text-sm font-semibold tracking-tight text-foreground">
-              Popular with you
+            <h2 id="popular-heading-usage" className="text-sm font-semibold tracking-tight text-foreground">
+              Popular tools
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-2 xsm:grid-cols-1 sm:grid-cols-2">
@@ -82,3 +98,4 @@ export function UsageSections() {
     </div>
   );
 }
+
