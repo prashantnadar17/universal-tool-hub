@@ -1,8 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import type { Tool } from "@/lib/tools";
+import { useGridKeyboardNav } from "@/hooks/use-grid-keyboard-nav";
 
 export default function ToolsGrid({ items }: { items: Tool[] }) {
+  const { containerRef } = useGridKeyboardNav<HTMLDivElement>();
+
   if (items.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border bg-card py-16 text-center">
@@ -20,7 +23,7 @@ export default function ToolsGrid({ items }: { items: Tool[] }) {
   const categories = Object.keys(grouped).sort((a, b) => grouped[a][0].priority - grouped[b][0].priority);
 
   return (
-    <div className="space-y-8 sm:space-y-10">
+    <div ref={containerRef} className="space-y-8 sm:space-y-10">
       {categories.map((category) => (
         <section key={category} aria-labelledby={`cat-${category}`}>
           <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
@@ -35,8 +38,9 @@ export default function ToolsGrid({ items }: { items: Tool[] }) {
                 key={tool.slug}
                 to="/tools/$slug"
                 params={{ slug: tool.slug }}
+                data-grid-item
                 aria-label={`Open ${tool.name}`}
-                className="group flex h-full min-w-0 flex-col rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                className="group flex h-full min-w-0 flex-col rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <div className="mb-2 flex items-center justify-between">
                   <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-secondary-foreground">
