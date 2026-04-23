@@ -38,15 +38,14 @@ export function CategorySidebar({ activeSlug }: { activeSlug?: string }) {
     >
       {/* aria-live announcement for sidebar state changes */}
       <span role="status" aria-live="polite" className="sr-only">{announcement}</span>
-      {/* Collapse/expand toggle — joined to the sidebar's right edge */}
+      {/* Collapse/expand toggle — fixed to viewport so it's always visible while scrolling */}
       <button
         type="button"
         onClick={toggleCollapsed}
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         aria-pressed={collapsed}
         title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        className="absolute top-3 z-30 hidden h-8 w-8 -translate-y-0 items-center justify-center rounded-r-md border border-l-0 border-border bg-card text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground lg:inline-flex"
-        style={{ left: "100%" }}
+        className={`fixed top-1/2 z-40 hidden h-10 w-6 -translate-y-1/2 items-center justify-center rounded-r-md border border-l-0 border-border bg-card text-foreground shadow-md transition-[left,background-color] duration-200 hover:bg-accent hover:text-accent-foreground lg:inline-flex ${collapsed ? "left-0" : "left-64"}`}
       >
         {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
       </button>
