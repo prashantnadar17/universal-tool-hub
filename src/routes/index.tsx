@@ -370,9 +370,11 @@ function HomePage() {
         {!hydrated ? (
           <ResultsSkeleton />
         ) : (
-          <Suspense fallback={<ResultsSkeleton />}>
-            <ToolsGrid items={results} />
-          </Suspense>
+          <div key={`${activeCat ?? "all"}-${deferredQuery}`} className="animate-fade-in">
+            <Suspense fallback={<ResultsSkeleton />}>
+              <ToolsGrid items={results} />
+            </Suspense>
+          </div>
         )}
       </section>
 
