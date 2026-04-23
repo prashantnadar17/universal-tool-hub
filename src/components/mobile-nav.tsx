@@ -18,6 +18,17 @@ export function MobileNav() {
     setOpen(false);
   }, [location.pathname]);
 
+  // Explicitly close the sheet on Escape (Radix handles this, but we add a
+  // global listener as a safety net to match expected dialog behaviour).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
