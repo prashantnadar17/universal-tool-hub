@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Suspense, lazy, useDeferredValue, useMemo, useState } from "react";
-import { LoadingSpinner } from "@/components/loading-spinner";
+import { Suspense, lazy, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { ToolSearch } from "@/components/tool-search";
 import { CategoryChips } from "@/components/category-nav";
 import { UsageSections } from "@/components/usage-sections";
+import { FeaturedSkeleton, PopularSkeleton, ResultsSkeleton } from "@/components/home-skeletons";
 import { fuzzySearchTools } from "@/lib/search";
 import { tools, toolsByCategory, totalTools, type ToolCategory } from "@/lib/tools";
 import {
