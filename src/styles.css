@@ -61,6 +61,12 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@theme {
+  --breakpoint-xsm: 30rem;
+  --breakpoint-mg: 56rem;
+  --breakpoint-3xl: 120rem;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(0.99 0.005 250);
@@ -141,5 +147,6 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    overflow-x: hidden;
   }
 }
