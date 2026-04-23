@@ -27,7 +27,7 @@ export function CategorySidebar({ activeSlug }: { activeSlug?: string }) {
       aria-label="Tool categories"
       className={`hidden shrink-0 border-r border-border bg-card transition-[width] duration-200 lg:block ${collapsed ? "w-0 overflow-hidden border-r-0" : "w-64"}`}
     >
-      <nav className="sticky top-16 max-h-[calc(100vh-4rem)] overflow-x-hidden overflow-y-auto p-4">
+      <nav className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-x-hidden overflow-y-auto p-4 sm:top-16 sm:max-h-[calc(100vh-4rem)]">
         <Link
           to="/"
           className="mb-4 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-foreground hover:bg-accent"

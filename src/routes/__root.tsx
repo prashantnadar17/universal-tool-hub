@@ -1,6 +1,9 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CommandPalette } from "@/components/command-palette";
+import { SiteHeader } from "@/components/site-header";
+import { CategorySidebar } from "@/components/category-nav";
+import { BackToTop } from "@/components/back-to-top";
 
 import appCss from "../styles.css?url";
 
@@ -31,18 +34,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Universal Tool Hub is a versatile web application providing a comprehensive suite of text-based tools." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Universal Tool Hub is a versatile web application providing a comprehensive suite of text-based tools." },
+      { title: "Universal Tools Hub" },
+      { name: "description", content: "Universal Tools Hub — hundreds of free online tools for text, images, PDFs, calculators, converters, developers and more." },
+      { name: "author", content: "Universal Tools" },
+      { property: "og:title", content: "Universal Tools Hub" },
+      { property: "og:description", content: "Hundreds of free online tools for text, images, PDFs, calculators, converters and developers." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Universal Tool Hub is a versatile web application providing a comprehensive suite of text-based tools." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ddf1c081-c47d-42a9-95e2-949823a6078d/id-preview-a495d75f--b9b78d1a-90ad-4cb5-8387-bbab2e2f4f1e.lovable.app-1776627616224.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ddf1c081-c47d-42a9-95e2-949823a6078d/id-preview-a495d75f--b9b78d1a-90ad-4cb5-8387-bbab2e2f4f1e.lovable.app-1776627616224.png" },
     ],
     links: [
       {
@@ -73,8 +71,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <ThemeProvider>
-      <Outlet />
-      <CommandPalette />
+      <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
+        <SiteHeader />
+        <div className="flex w-full min-w-0">
+          <CategorySidebar />
+          <div className="min-w-0 flex-1">
+            <Outlet />
+          </div>
+        </div>
+        <BackToTop />
+        <CommandPalette />
+      </div>
     </ThemeProvider>
   );
 }
