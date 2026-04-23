@@ -6,6 +6,8 @@ import { UsageSections } from "@/components/usage-sections";
 import { FeaturedSkeleton, PopularSkeleton, ResultsSkeleton } from "@/components/home-skeletons";
 import { fuzzySearchTools } from "@/lib/search";
 import { tools, toolsByCategory, totalTools, type ToolCategory } from "@/lib/tools";
+import { loadHomePrefs, saveHomePrefs } from "@/lib/home-prefs";
+import { useGridKeyboardNav } from "@/hooks/use-grid-keyboard-nav";
 import {
   FileText,
   Image as ImageIcon,
@@ -129,11 +131,23 @@ function HomePage() {
   const categoryCount = Object.keys(toolsByCategory).length;
   const isSearching = deferredQuery.trim().length > 0 || activeCat !== null;
   const resultsRef = useRef<HTMLDivElement | null>(null);
+  const featuredNav = useGridKeyboardNav<HTMLDivElement>();
+  const popularNav = useGridKeyboardNav<HTMLDivElement>();
 
+  // Restore query + category from localStorage on first mount.
   useEffect(() => {
+    const prefs = loadHomePrefs();
+    if (prefs.query) setQuery(prefs.query);
+    if (prefs.activeCat) setActiveCat(prefs.activeCat);
     const t = window.setTimeout(() => setHydrated(true), 120);
     return () => window.clearTimeout(t);
   }, []);
+
+  // Persist whenever they change (debounced via effect microtask coalescing).
+  useEffect(() => {
+    if (!hydrated) return;
+    saveHomePrefs({ query, activeCat });
+  }, [query, activeCat, hydrated]);
 
   const results = useMemo(() => {
     const base = deferredQuery ? fuzzySearchTools(deferredQuery) : Object.values(toolsByCategory).flat();
@@ -219,7 +233,12 @@ function HomePage() {
             {!hydrated ? (
               <FeaturedSkeleton />
             ) : (
-              <div className="grid grid-cols-1 gap-4 xsm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div
+                ref={featuredNav.containerRef}
+                role="grid"
+                aria-label="Featured tool categories"
+                className="grid animate-fade-in grid-cols-1 gap-4 xsm:gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              >
                 {FEATURES.map((f) => {
                   const count = f.cats.reduce((n, c) => n + (toolsByCategory[c]?.length ?? 0), 0);
                   const Icon = f.icon;
@@ -227,9 +246,11 @@ function HomePage() {
                     <button
                       key={f.title}
                       type="button"
+                      data-grid-item
+                      role="gridcell"
                       onClick={() => selectCategory(f.cats[0])}
                       aria-label={`Browse ${f.title}`}
-                      className={`group flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${f.ring}`}
+                      className={`group flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${f.ring}`}
                     >
                       <div className="flex items-center justify-between">
                         <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${f.accent}`}>
@@ -288,21 +309,27 @@ function HomePage() {
             {!hydrated ? (
               <PopularSkeleton />
             ) : (
-              <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+              <div className="animate-fade-in rounded-2xl border border-border bg-card p-5 sm:p-6">
                 <div className="mb-4 flex items-center gap-2">
                   <Flame className="h-4 w-4 text-primary" aria-hidden />
                   <h2 id="popular-heading" className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
                     Most popular tools
                   </h2>
                 </div>
-                <div className="grid grid-cols-1 gap-2.5 xsm:grid-cols-2 lg:grid-cols-3">
+                <div
+                  ref={popularNav.containerRef}
+                  role="list"
+                  className="grid grid-cols-1 gap-2.5 xsm:grid-cols-2 lg:grid-cols-3"
+                >
                   {popular.map((tool, i) => (
                     <Link
                       key={tool.slug}
                       to="/tools/$slug"
                       params={{ slug: tool.slug }}
+                      data-grid-item
+                      role="listitem"
                       aria-label={`Open ${tool.name}`}
-                      className="group flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm"
+                      className="group flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       <span className="flex min-w-0 items-center gap-2">
                         <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[11px] font-semibold text-primary">
@@ -343,9 +370,11 @@ function HomePage() {
         {!hydrated ? (
           <ResultsSkeleton />
         ) : (
-          <Suspense fallback={<ResultsSkeleton />}>
-            <ToolsGrid items={results} />
-          </Suspense>
+          <div key={`${activeCat ?? "all"}-${deferredQuery}`} className="animate-fade-in">
+            <Suspense fallback={<ResultsSkeleton />}>
+              <ToolsGrid items={results} />
+            </Suspense>
+          </div>
         )}
       </section>
 
