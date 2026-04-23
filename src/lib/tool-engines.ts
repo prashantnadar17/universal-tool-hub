@@ -254,8 +254,11 @@ export const engines: Record<string, ToolEngine> = {
   "speech-to-text": { kind: "browser", browserComponent: "stt" },
   "language-translator": {
     kind: "ai",
-    aiPrompt: "Translate the user's text to the target language specified in the options. Return ONLY the translation.",
-    fields: [{ key: "target", label: "Target language", type: "language", defaultValue: "Spanish" }],
+    aiPrompt: "You are a translator. Translate the user's text into the target language specified in the options. If the source language is 'Auto-detect', infer it from the text. Return ONLY the translated text — no quotes, no explanations, no source-language label.",
+    fields: [
+      { key: "source", label: "Source language", type: "language", defaultValue: "Auto-detect", placeholder: "Auto-detect" },
+      { key: "target", label: "Target language", type: "language", defaultValue: "Spanish" },
+    ],
   },
   "plagiarism-checker": {
     kind: "ai",
