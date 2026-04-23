@@ -230,13 +230,17 @@ export const engines: Record<string, ToolEngine> = {
     outputLabel: "Generated passwords",
     run: (s, o) => transforms.password(s, {
       length: Number(o?.length) || 16,
-      symbols: !!o?.symbols,
       count: Number(o?.count) || 5,
+      symbols: !!o?.symbols,
+      numbers: o?.numbers !== false,
+      mixedCase: o?.mixedCase !== false,
     }),
     fields: [
       { key: "length", label: "Length", type: "number", defaultValue: 16 },
       { key: "count", label: "How many", type: "number", defaultValue: 5 },
-      { key: "symbols", label: "Include symbols", type: "checkbox", defaultValue: true },
+      { key: "mixedCase", label: "Mix uppercase & lowercase (random capitalization)", type: "checkbox", defaultValue: true },
+      { key: "numbers", label: "Include numbers", type: "checkbox", defaultValue: true },
+      { key: "symbols", label: "Include symbols", type: "checkbox", defaultValue: false },
     ],
   },
   "uuid-generator": {
