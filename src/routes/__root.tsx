@@ -71,9 +71,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
+      <div className="min-h-screen bg-background text-foreground">
         <SiteHeader />
-        <div className="flex w-full min-w-0">
+        <div className="flex w-full min-w-0 overflow-x-clip">
           <CategorySidebar />
           <div className="min-w-0 flex-1">
             <Outlet />

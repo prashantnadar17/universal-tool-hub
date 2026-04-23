@@ -389,7 +389,7 @@ function HomePage() {
         ) : (
           <div key={`${activeCat ?? "all"}-${deferredQuery}`} className="animate-fade-in">
             <Suspense fallback={<ResultsSkeleton />}>
-              <ToolsGrid items={results} />
+              <ToolsGrid items={results} query={deferredQuery} />
             </Suspense>
           </div>
         )}
