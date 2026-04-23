@@ -6,6 +6,8 @@ import { UsageSections } from "@/components/usage-sections";
 import { FeaturedSkeleton, PopularSkeleton, ResultsSkeleton } from "@/components/home-skeletons";
 import { fuzzySearchTools } from "@/lib/search";
 import { tools, toolsByCategory, totalTools, type ToolCategory } from "@/lib/tools";
+import { loadHomePrefs, saveHomePrefs } from "@/lib/home-prefs";
+import { useGridKeyboardNav } from "@/hooks/use-grid-keyboard-nav";
 import {
   FileText,
   Image as ImageIcon,
