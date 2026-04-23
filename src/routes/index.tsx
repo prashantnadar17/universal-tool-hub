@@ -198,8 +198,14 @@ function HomePage() {
     <main className="min-w-0 px-3 pb-16 pt-6 xsm:px-4 sm:px-6 mg:pt-8 lg:px-8 2xl:px-10 3xl:px-12">
       {/* Hero */}
       <section className="overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-primary/5 to-transparent px-4 py-10 text-center sm:px-8 sm:py-14">
-        <span className="inline-flex items-center rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
-          Universal Tools Hub
+        <span
+          className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/80 px-3 py-1 text-xs font-medium text-foreground shadow-sm backdrop-blur"
+          aria-label={`${totalTools} tools available`}
+        >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground tabular-nums">
+            {totalTools}
+          </span>
+          tools available · live count
         </span>
         <h1 className="mx-auto mt-4 max-w-3xl text-3xl font-bold tracking-tight text-foreground xsm:text-4xl sm:text-5xl xl:text-6xl">
           All your everyday tools,{" "}
