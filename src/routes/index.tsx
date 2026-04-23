@@ -216,35 +216,39 @@ function HomePage() {
               </h2>
               <span className="text-xs text-muted-foreground">{categoryCount} categories · {totalTools}+ tools</span>
             </div>
-            <div className="grid grid-cols-1 gap-4 xsm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURES.map((f) => {
-                const count = f.cats.reduce((n, c) => n + (toolsByCategory[c]?.length ?? 0), 0);
-                const Icon = f.icon;
-                return (
-                  <button
-                    key={f.title}
-                    type="button"
-                    onClick={() => setActiveCat(f.cats[0])}
-                    aria-label={`Browse ${f.title}`}
-                    className={`group flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${f.ring}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${f.accent}`}>
-                        <Icon className="h-5 w-5" />
+            {!hydrated ? (
+              <FeaturedSkeleton />
+            ) : (
+              <div className="grid grid-cols-1 gap-4 xsm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {FEATURES.map((f) => {
+                  const count = f.cats.reduce((n, c) => n + (toolsByCategory[c]?.length ?? 0), 0);
+                  const Icon = f.icon;
+                  return (
+                    <button
+                      key={f.title}
+                      type="button"
+                      onClick={() => selectCategory(f.cats[0])}
+                      aria-label={`Browse ${f.title}`}
+                      className={`group flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md ${f.ring}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${f.accent}`}>
+                          <Icon className="h-5 w-5" />
+                        </span>
+                        <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-secondary-foreground">
+                          {count} tools
+                        </span>
+                      </div>
+                      <h3 className="mt-4 text-base font-semibold text-foreground sm:text-lg">{f.title}</h3>
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{f.description}</p>
+                      <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-primary">
+                        Explore <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                       </span>
-                      <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-secondary-foreground">
-                        {count} tools
-                      </span>
-                    </div>
-                    <h3 className="mt-4 text-base font-semibold text-foreground sm:text-lg">{f.title}</h3>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{f.description}</p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-primary">
-                      Explore <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </section>
 
           {/* Coming soon tiles — communicates broader scope */}
@@ -281,33 +285,37 @@ function HomePage() {
 
           {/* Most popular strip */}
           <section aria-labelledby="popular-heading" className="mt-10 sm:mt-12">
-            <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <Flame className="h-4 w-4 text-primary" aria-hidden />
-                <h2 id="popular-heading" className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
-                  Most popular tools
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 gap-2.5 xsm:grid-cols-2 lg:grid-cols-3">
-                {popular.map((tool, i) => (
-                  <Link
-                    key={tool.slug}
-                    to="/tools/$slug"
-                    params={{ slug: tool.slug }}
-                    aria-label={`Open ${tool.name}`}
-                    className="group flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm"
-                  >
-                    <span className="flex min-w-0 items-center gap-2">
-                      <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[11px] font-semibold text-primary">
-                        {i + 1}
+            {!hydrated ? (
+              <PopularSkeleton />
+            ) : (
+              <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                <div className="mb-4 flex items-center gap-2">
+                  <Flame className="h-4 w-4 text-primary" aria-hidden />
+                  <h2 id="popular-heading" className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
+                    Most popular tools
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 gap-2.5 xsm:grid-cols-2 lg:grid-cols-3">
+                  {popular.map((tool, i) => (
+                    <Link
+                      key={tool.slug}
+                      to="/tools/$slug"
+                      params={{ slug: tool.slug }}
+                      aria-label={`Open ${tool.name}`}
+                      className="group flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm"
+                    >
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[11px] font-semibold text-primary">
+                          {i + 1}
+                        </span>
+                        <span className="truncate font-medium text-foreground">{tool.name}</span>
                       </span>
-                      <span className="truncate font-medium text-foreground">{tool.name}</span>
-                    </span>
-                    <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-                  </Link>
-                ))}
+                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </section>
         </>
       )}
