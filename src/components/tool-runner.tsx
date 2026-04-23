@@ -1,4 +1,4 @@
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Copy, Download, Loader2, Play, RotateCcw, Sparkles } from "lucide-react";
 import type { Tool } from "@/lib/tools";
 import { engines, type ToolField } from "@/lib/tool-engines";
@@ -35,6 +35,15 @@ function TransformOrAi({ tool }: { tool: Tool }) {
     engine.fields?.forEach((f) => {
       if (f.defaultValue !== undefined) init[f.key] = f.defaultValue;
     });
+    // Restore last target language for translator
+    if (tool.slug === "language-translator" && typeof window !== "undefined") {
+      try {
+        const saved = window.localStorage.getItem("translator:lastTarget");
+        if (saved) init.target = saved;
+      } catch {
+        // ignore
+      }
+    }
     return init;
   });
   const [error, setError] = useState<string | null>(null);
@@ -44,10 +53,31 @@ function TransformOrAi({ tool }: { tool: Tool }) {
   const inputRequired = !engine.inputOptional;
   const isAi = engine.kind === "ai";
 
+  // Validation: translator requires a valid target language
+  const isTranslator = tool.slug === "language-translator";
+  const targetLang = String(opts.target ?? "").trim();
+  const targetInvalid = isTranslator && (!targetLang || targetLang === "Auto-detect");
+
+  // Persist target language for translator
+  useEffect(() => {
+    if (!isTranslator || typeof window === "undefined") return;
+    if (targetLang && targetLang !== "Auto-detect") {
+      try {
+        window.localStorage.setItem("translator:lastTarget", targetLang);
+      } catch {
+        // ignore
+      }
+    }
+  }, [isTranslator, targetLang]);
+
   async function run() {
     setError(null);
     if (inputRequired && !input.trim()) {
       setError("Please enter some text.");
+      return;
+    }
+    if (targetInvalid) {
+      setError("Please select a valid target language.");
       return;
     }
 
